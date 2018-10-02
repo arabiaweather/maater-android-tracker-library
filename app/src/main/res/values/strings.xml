@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Tracker-Android-POC</string>
+    <string name="service_name">Tracker-Service</string>
+</resources>
