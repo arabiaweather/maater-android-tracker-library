@@ -2,12 +2,16 @@ package tracker.android.tracker_android_poc
 
 import android.app.Service
 import android.content.Intent
+import android.os.Handler
 import android.os.IBinder
 import io.socket.client.IO
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import org.json.JSONObject
+import org.json.JSONException
+
+
 
 val USER_ID = "USER_ID"
 val CLIENT_ID = "CLIENT_ID"
@@ -25,7 +29,7 @@ class TrackingService : Service() {
 //        return null
     }
 
-    val trackingId = ""
+    private var trackingId = 0
 
     private var userId = 0
     private var clientId = 0
@@ -49,7 +53,7 @@ class TrackingService : Service() {
             val email: String
     )
 
-    var socket = IO.socket("http://macbook-air.duckdns.org:8282")
+    var socket = IO.socket("http://localhost:8282")
 
     fun connect(userId: Int, clientId: Int, name: String, email: String) {
 
@@ -72,22 +76,46 @@ class TrackingService : Service() {
 
 
         val opts = IO.Options()
-        opts.secure = true
+        opts.secure = false
         opts.forceNew = true
         opts.reconnection = true
 
-        socket.on(Socket.EVENT_CONNECT, Emitter.Listener {
-            println("socket connected")
-            this.socket.emit("track", json.toString())
-        }).on(Socket.EVENT_ERROR, Emitter.Listener {
-            println("error:")
-            println(it)
-        })
+        socket = IO.socket("http://macbook-air.duckdns.org:8282",opts)
 
-        socket.on("tracked", Emitter.Listener {
-            println("tracked")
+        socket.on(Socket.EVENT_CONNECT) {
+            println("socket connected")
+            emitTrackDelayed(json.toString())
+        }.on(Socket.EVENT_ERROR) {
+            println("socket error:")
             println(it)
-        })
+        }.on(Socket.EVENT_DISCONNECT) {
+            println("socket disconnect")
+        }
+        socket.on("tracked", onTracked)
         socket.connect()
     }
+
+    // this has to be delayed, because of a bug in Android and Ahmed Awad
+    fun emitTrackDelayed(json: String){
+        java.util.Timer().schedule(
+                object : java.util.TimerTask() {
+                    override fun run() {
+                        // your code here
+                        socket.emit("track", json)
+                    }
+                },3000
+        )
+    }
+
+    private val onTracked = Emitter.Listener { args ->
+        val json = args[0] as JSONObject
+        val tid = json.getInt("id")
+        println("tracked .,.....")
+        println("tracked .,.....")
+        println("tracked .,.....")
+        println(tid)
+        trackingId = tid
+
+    }
+
 }
