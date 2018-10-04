@@ -21,10 +21,7 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".TrackingService"
-            android:label="@string/service_name">
-        </service>
+
     </application>
 
 </manifest>

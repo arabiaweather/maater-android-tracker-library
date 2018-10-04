@@ -27,34 +27,31 @@ android {
             minSdkVersion 19
              applicationId 'com.arabiaweather.maater.tracking.poc_deveopment'
             targetSdkVersion 27
-            buildConfigField 'String', 'TRACKING_URL', '\"http://macbook-air.duckdns.org:8282\"'
+//            buildConfigField 'String', 'TRACKING_URL', '\"http://macbook-air.duckdns.org:8282\"'
         }
         staging {
             minSdkVersion 19
             applicationId 'com.arabiaweather.maater.tracking.poc_staging'
             targetSdkVersion 27
-            buildConfigField 'String', 'TRACKING_URL', '\"https://staging.tracker.devops.arabiaweather.com\"'
+//            buildConfigField 'String', 'TRACKING_URL', '\"https://staging.tracker.devops.arabiaweather.com\"'
         }
         production {
             minSdkVersion 19
             applicationId 'com.arabiaweather.maater.tracking.poc'
             targetSdkVersion 27
-            buildConfigField 'String', 'TRACKING_URL', '\"https://production.tracker.devops.arabiaweather.com\"'
+//            buildConfigField 'String', 'TRACKING_URL', '\"https://production.tracker.devops.arabiaweather.com\"'
         }
     }
 
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:27+'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation ('io.socket:socket.io-client:1.0.0') {
-        // excluding org.json which is provided by Android
-        exclude group: 'org.json', module: 'json'
-    }
+    implementation project(':maaterandroidtracker')
 }

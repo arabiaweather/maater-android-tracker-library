@@ -1,4 +1,4 @@
-package tracker.android.tracker_android_poc
+package com.example.maaterandroidtracker
 
 import android.app.Service
 import android.content.BroadcastReceiver
@@ -13,7 +13,6 @@ import io.socket.client.IO
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import org.json.JSONObject
-import java.util.logging.Logger
 
 
 const val USER_ID = "USER_ID"
@@ -41,36 +40,21 @@ class TrackingService : Service() {
     }
 
     override fun onBind(intent: Intent): IBinder? {
-
         return null
     }
-
-
-
-    private var userId = 0
-    private var clientId = 0
-    private var name = ""
-    private var email = ""
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         LocalBroadcastManager.getInstance(this).registerReceiver(broadCastReceiver, IntentFilter(BROADCAST_STOP_TRACKING))
         Log.i(TAG, "TrackingService onStartCommand, $trackingId")
-        userId = intent?.extras?.getInt(USER_ID) ?: 0
-        clientId = intent?.extras?.getInt(CLIENT_ID) ?: 0
-        name = intent?.extras?.getString(NAME) ?: ""
-        email = intent?.extras?.getString(EMAIL) ?: ""
+        val userId = intent?.extras?.getInt(USER_ID) ?: 0
+        val clientId = intent?.extras?.getInt(CLIENT_ID) ?: 0
+        val name = intent?.extras?.getString(NAME) ?: ""
+        val email = intent?.extras?.getString(EMAIL) ?: ""
 
         connect(userId, clientId, name, email)
         return Service.START_NOT_STICKY
     }
-
-    data class TrackingCommand(
-            val userId: Int,
-            val clientId: Int,
-            val name: String,
-            val email: String
-    )
 
     var socket = IO.socket("http://localhost:8282")
 
@@ -83,7 +67,7 @@ class TrackingService : Service() {
         }
 
         if (trackingId != 0){
-            Log.i(TAG,"tracking id already set ${trackingId} , SKIPPING 2")
+            Log.i(TAG,"tracking id already set $trackingId , SKIPPING 2")
             stopSelf()
             return
         }

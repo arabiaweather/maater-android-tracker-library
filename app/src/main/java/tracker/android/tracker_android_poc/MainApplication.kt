@@ -3,81 +3,28 @@ package tracker.android.tracker_android_poc
 import android.app.Activity
 import android.app.Application
 import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
+import com.example.maaterandroidtracker.Tracker
 
 class MainApplication : Application() {
 
-    val TAG = "MainApplication"
-
-    public fun track(userId: Int, clientId: Int, name: String, email: String) {
-        val i = Intent(this, TrackingService::class.java)
-        i.apply{
-            this.putExtra(USER_ID,userId)
-            this.putExtra(CLIENT_ID,clientId)
-            this.putExtra(NAME,name)
-            this.putExtra(EMAIL,email)
-        }
-        this.startService(i)
-    }
-
     override fun onCreate() {
         super.onCreate()
+        resumeTrackUser()
+    }
 
-        registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
-
-            private var numStarted: Int = 0
-            set(value) {
-                if (value <= 0){
-                    Log.i(TAG,"value <= 0")
-                    val intent = Intent()
-                    intent.action = BROADCAST_STOP_TRACKING
-                    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
-                }
-                if (value == 1){
-                    Log.i(TAG,"value == 1")
-                    (applicationContext as MainApplication).track(99,7878,"donatello", "domnn@renesance.com")
-                }
-            }
-            fun activityStarted() {
-                numStarted++
-            }
-
-            fun activityStopped() {
-                numStarted--
-            }
-
-            override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
-
-            }
-
-            override fun onActivityStarted(activity: Activity?) {
-
-            }
-
-            override fun onActivityResumed(activity: Activity?) {
-                activityStarted()
-            }
-
-            override fun onActivityPaused(activity: Activity?) {
-                activityStopped()
-            }
-
-            override fun onActivityStopped(activity: Activity?) {
-
-            }
-
-            override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {
-
-            }
-
-            override fun onActivityDestroyed(activity: Activity?) {
-
-            }
-        })
-
+    fun resumeTrackUser(){
+        val userId = this.getSharedPreferences("userdefaults", Context.MODE_PRIVATE).getInt("USER_ID",0)
+        val clientId = this.getSharedPreferences("userdefaults", Context.MODE_PRIVATE).getInt("CLIENT_ID",0)
+        val email = this.getSharedPreferences("userdefaults", Context.MODE_PRIVATE).getString("EMAIL","")
+        val name = this.getSharedPreferences("userdefaults", Context.MODE_PRIVATE).getString("NAME","")
+        Log.i("MainApplication","resumeTrackUser: userId: $userId, $clientId, $name, $email")
+        Tracker.getInstance(this).resumeTrackingUser(userId,clientId,name,email)
     }
 
 }
