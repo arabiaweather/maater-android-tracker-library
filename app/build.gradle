@@ -20,6 +20,29 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    flavorDimensions "default"
+    productFlavors {
+         development {
+            minSdkVersion 19
+             applicationId 'com.arabiaweather.maater.tracking.poc_deveopment'
+            targetSdkVersion 27
+            buildConfigField 'String', 'TRACKING_URL', '\"http://macbook-air.duckdns.org:8282\"'
+        }
+        staging {
+            minSdkVersion 19
+            applicationId 'com.arabiaweather.maater.tracking.poc_staging'
+            targetSdkVersion 27
+            buildConfigField 'String', 'TRACKING_URL', '\"https://staging.tracker.devops.arabiaweather.com\"'
+        }
+        production {
+            minSdkVersion 19
+            applicationId 'com.arabiaweather.maater.tracking.poc'
+            targetSdkVersion 27
+            buildConfigField 'String', 'TRACKING_URL', '\"https://production.tracker.devops.arabiaweather.com\"'
+        }
+    }
+
 }
 
 dependencies {
